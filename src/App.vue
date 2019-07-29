@@ -1,16 +1,18 @@
 <template>
-  <div class="test">
-    <h1>{{msg}}</h1>
+  <div id="app">
+    <h1>TODOLIST</h1>
+    <TodoList/>
   </div>
 </template>
 
 <script>
+
+import TodoList from './components/TodoList'
+
 export default {
   name: "App",
-  data() {
-    return {
-      msg: "TEST"
+    components: {
+      TodoList
     }
-  }
 }
 </script>
