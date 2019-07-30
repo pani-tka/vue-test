@@ -1,9 +1,11 @@
 <template>
   <div>
     <h1>TODOS</h1>
+      <input v-model="newTodo" placeholder="New todo">
+      <button v-on:click="addTodo">Add</button>
       <ul>
         <li v-for="(todo, index) in todos" :key='index' >
-          {{ todo}}
+          {{todo}}
         </li>
       </ul>
   </div>
@@ -15,7 +17,14 @@ export default {
   name: "App",
   data() {
     return {
-      todos: ['one', 'two', 'three', 'four']
+      newTodo: '',
+      todos: [],
+    }
+  },
+  methods: {
+    addTodo (newTodo) {
+      this.todos.push(this.newTodo);
+      this.newTodo = ''
     }
   }
 }
