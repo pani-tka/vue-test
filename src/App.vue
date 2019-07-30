@@ -1,15 +1,21 @@
 <template>
-  <div class="test">
-    <h1>{{msg}}</h1>
+  <div>
+    <h1>TODOS</h1>
+      <ul>
+        <li v-for="(todo, index) in todos" :key='index' >
+          {{ todo}}
+        </li>
+      </ul>
   </div>
 </template>
 
 <script>
+
 export default {
   name: "App",
   data() {
     return {
-      msg: "TEST"
+      todos: ['one', 'two', 'three', 'four']
     }
   }
 }
