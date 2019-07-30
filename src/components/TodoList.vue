@@ -1,9 +1,8 @@
 <template>
   <div>
     <TodoHeader
-      v-bind:value="newTodoName"
       placeholder="New todo"
-      @keydown.enter="addTodo"
+      @addTodo="addTodo"
     />
     <ul v-if="todos.length">
       <TodoItem
@@ -32,24 +31,18 @@ export default Vue.component('TodoList', {
   },
   data: function() {
     return {
-      todos: [
-        {id: 0, title: "Create vue-project"},
-        {id: 1, title: "Display 'Test'"},
-        {id: 2, title: "Try to transfom in todo-list"}
-      ],
-      newTodoName: '',
+      todos: [],
+      newTodoName: ''
     };
   },
   methods: {
-    addTodo () {
-      const todoName = this.newTodoName;
-      if (todoName) {
-				this.todos.push({
-					id: todos.length+1,
-					title: todoName
-				})
-				this.newTodoName = ''
-			}
+    addTodo (newTodoName) {
+      debugger
+        this.todos.push({
+          id: this.todos.length+1,
+          title: newTodoName
+        })
+        this.props.newTodoName = ''
     },
     removeTodo(selectedTodoId) {
       this.todos = this.todos.filter(todo => {

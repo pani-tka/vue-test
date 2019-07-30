@@ -18,6 +18,7 @@ export default Vue.component('TodoItem', {
       todoTitle: this.todo.title,
       todoId: this.todo.id,
     }
+    console.log(todo)
   },
 })
 </script>
