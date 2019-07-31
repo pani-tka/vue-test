@@ -1,8 +1,7 @@
 <template>
   <div>
     <h1>TODOS</h1>
-    <input v-model="newTodo" placeholder="New todo">
-    <button v-on:click="addTodo">Add</button>
+    <AddNewTodo @addTodo="addTodo"></AddNewTodo>
     <ul v-for="(todo, index) in todos" :key='index'>
       <li>
         {{todo}}
@@ -13,20 +12,24 @@
 </template>
 
 <script>
+import AddNewTodo from './components/add-new-todo'
 export default {
   name: "App",
+  
+  components: {
+    AddNewTodo
+  },
+  
   data() {
     return {
-      newTodo: '',
-      todos: [],
+      todos: []
     }
   },
+
   methods: {
-    addTodo () {
-      this.todos.push(this.newTodo);
-      this.newTodo = '';
+    addTodo (newTodo) {
+      this.todos.push(newTodo)
     },
-    
     removeTodo (index) {
       this.todos.splice(index, 1);
     }
