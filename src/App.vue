@@ -2,22 +2,20 @@
   <div>
     <h1>TODOS</h1>
     <AddNewTodo @addTodo="addTodo"></AddNewTodo>
-    <ul v-for="(todo, index) in todos" :key='index'>
-      <li>
-        {{todo}}
-        <button v-on:click="removeTodo(index)">Remove</button>
-      </li>
-    </ul>
+    <TodoList v-if="todos.length" :todos="todos" @removeTodo='removeTodo'></TodoList>
+    <p v-else>Nothing left in the list.</p>
   </div>
 </template>
 
 <script>
 import AddNewTodo from './components/add-new-todo'
+import TodoList from './components/todo-list'
 export default {
   name: "App",
-  
+
   components: {
-    AddNewTodo
+    AddNewTodo,
+    TodoList
   },
   
   data() {
@@ -30,6 +28,7 @@ export default {
     addTodo (newTodo) {
       this.todos.push(newTodo)
     },
+
     removeTodo (index) {
       this.todos.splice(index, 1);
     }
