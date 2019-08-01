@@ -1,18 +1,24 @@
 <template>
   <ul>
-    <li v-for="(todo, index) in todos" :key='index'>
-      {{todo}}
-      <button @click="$emit('removeTodo', index)">Remove</button>
-    </li>
+    <TodoItem 
+      v-for="(todo, index) in todos"
+      :key="index"
+      :todo="todo"
+      @removeTodo="$emit('removeTodo', index)"
+    />
   </ul>
 </template>
 
 <script>
 import Vue from 'vue'
+import TodoItem from './todo-item'
 
 export default Vue.component('TodoList', {
   props: {
     todos: Array
+  },
+  components: {
+    TodoItem
   }
 })
 
