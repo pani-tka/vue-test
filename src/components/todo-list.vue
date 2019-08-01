@@ -3,9 +3,8 @@
     <TodoItem 
       v-for="(todo, index) in todos"
       :key="index"
-      :index='index'
       :todo="todo"
-      @removeTodo="$emit('removeTodo', index)"
+      @removeTodoItem="$emit('removeTodoById', index)"
     />
   </ul>
 </template>

@@ -2,7 +2,7 @@
   <div>
     <h1>TODOS</h1>
     <AddNewTodo @addTodo="addTodo"></AddNewTodo>
-    <TodoList v-if="todos.length" :todos="todos" @removeTodo='removeTodo'></TodoList>
+    <TodoList v-if="todos.length" :todos="todos" @removeTodoById='removeTodoById'></TodoList>
     <p v-else>Nothing left in the list.</p>
   </div>
 </template>
@@ -29,8 +29,8 @@ export default {
       this.todos.push(newTodo)
     },
 
-    removeTodo (index) {
-      this.todos.splice(index, 1);
+    removeTodoById (id) {
+      this.todos.splice(id, 1);
     }
   }
 }
