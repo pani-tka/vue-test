@@ -5,6 +5,7 @@
       :key="index"
       :todo="todo"
       @removeTodoItem="$emit('removeTodoById', index)"
+      @editTodo="$emit('editTodo', todo)"
     />
   </ul>
 </template>

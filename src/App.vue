@@ -2,7 +2,12 @@
   <div>
     <h1>TODOS</h1>
     <AddNewTodo @addTodo="addTodo"></AddNewTodo>
-    <TodoList v-if="todos.length" :todos="todos" @removeTodoById='removeTodoById'></TodoList>
+    <TodoList 
+      v-if="todos.length" 
+      :todos="todos" :todo='todo' 
+      @removeTodoById='removeTodoById' 
+      @editTodo='editTodo'
+    />
     <p v-else>Nothing left in the list.</p>
   </div>
 </template>
@@ -20,18 +25,29 @@ export default {
   
   data() {
     return {
-      todos: []
+      todos: [],
+      todo:{},
+      editTodoValue:'',
     }
   },
 
   methods: {
     addTodo (newTodo) {
-      this.todos.push(newTodo)
+      let todo = {
+        text: newTodo,
+        editing: false
+      };
+      this.todos.push(todo);
     },
 
     removeTodoById (id) {
       this.todos.splice(id, 1);
-    }
+    },
+
+    editTodo(todo) {
+      if (todo.text.trim() == "") todo.text = this.editTodoValue;
+      todo.editing = false;
+    },
   }
 }
 </script>
