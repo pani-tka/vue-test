@@ -4,9 +4,10 @@
     <AddNewTodo @addTodo="addTodo"></AddNewTodo>
     <TodoList 
       v-if="todos.length" 
-      :todos="todos" :todo='todo' 
+      :todos="todos" 
       @removeTodoById='removeTodoById' 
       @editTodo='editTodo'
+      @cancelEdit='cancelEdit'
     />
     <p v-else>Nothing left in the list.</p>
   </div>
@@ -25,29 +26,32 @@ export default {
   
   data() {
     return {
-      todos: [],
-      todo:{},
-      editTodoValue:'',
+      todos: []
     }
   },
 
   methods: {
     addTodo (newTodo) {
       let todo = {
-        text: newTodo,
+        title: newTodo,
+        completed: false,
         editing: false
       };
-      this.todos.push(todo);
+      if (newTodo != '') {
+        this.todos.push(todo)
+      } 
     },
-
     removeTodoById (id) {
       this.todos.splice(id, 1);
     },
-
-    editTodo(todo) {
-      if (todo.text.trim() == "") todo.text = this.editTodoValue;
+    editTodo (index, todo, editTodoCache) {
+      if (todo.title.trim() == "") todo.title = this.editTodoCache;
       todo.editing = false;
     },
+    cancelEdit (index, todo, editTodoCache) {
+      todo.title = this.editTodoCache;
+      todo.editing = false;
+    }
   }
 }
 </script>

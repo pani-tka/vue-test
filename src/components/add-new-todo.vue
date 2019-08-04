@@ -1,6 +1,6 @@
 <template>
   <div>
-    <input v-model="newTodo" placeholder="New todo"/>
+    <input v-model="newTodo" placeholder="Please, add what you need to do..." @keyup.enter='clearTodoInput'/>
     <button @click='clearTodoInput'>Add</button>
   </div>
 </template>
@@ -18,7 +18,7 @@ export default Vue.component('AddNewTodo', {
     clearTodoInput () {
       this.$emit('addTodo', this.newTodo);
       this.newTodo = '';
-    },
+    }
   }
 })
 </script>
