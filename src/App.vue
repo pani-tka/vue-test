@@ -6,7 +6,7 @@
       v-if="todos.length" 
       :todos="todos" 
       @removeTodoById='removeTodoById' 
-      @editTodo='editTodo'
+      @editTodoById='editTodoById'
     />
     <p v-else>Nothing left in the list.</p>
   </div>
@@ -31,16 +31,13 @@ export default {
 
   methods: {
     addTodo (newTodo) {
-      let todo = {title: newTodo};
-      this.todos.push(todo)
+      this.todos.push(newTodo);
     },
     removeTodoById (id) {
       this.todos.splice(id, 1);
     },
-    editTodo (index, todo) {
-      if (todo.title.trim() == "") {
-        todo.title = this.beforeEditingValue;
-      }
+    editTodoById (id, todo) {
+      this.$set(this.todos, id, todo);
     }
   }
 }

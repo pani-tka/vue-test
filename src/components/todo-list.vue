@@ -5,7 +5,7 @@
       :key="index"
       :todo="todo"
       @removeTodoItem="$emit('removeTodoById', index)"
-      @editTodo="$emit('editTodo', index, todo)"
+      @editTodo="editTodoById($event, index)"
     />
   </ul>
 </template>
@@ -18,9 +18,14 @@ export default Vue.component('TodoList', {
   props: {
     todos: Array
   },
-  
   components: {
     TodoItem
+  },
+  
+  methods: {
+    editTodoById (editingValue, index) {
+      this.$emit('editTodoById', index, editingValue)
+    }
   }
 })
 
