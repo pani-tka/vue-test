@@ -7,7 +7,6 @@
       :todos="todos" 
       @removeTodoById='removeTodoById' 
       @editTodo='editTodo'
-      @cancelEdit='cancelEdit'
     />
     <p v-else>Nothing left in the list.</p>
   </div>
@@ -41,16 +40,16 @@ export default {
         this.todos.push(todo)
       } 
     },
+
     removeTodoById (id) {
       this.todos.splice(id, 1);
     },
-    editTodo (index, todo, editTodoCache) {
-      if (todo.title.trim() == "") todo.title = this.editTodoCache;
-      todo.editing = false;
-    },
-    cancelEdit (index, todo, editTodoCache) {
-      todo.title = this.editTodoCache;
-      todo.editing = false;
+
+    editTodo (index, todo) {
+      if(todo.title != '') {
+        if (todo.title.trim() == "") todo.title = this.editTodoCache;
+        todo.editing = false;
+      }
     }
   }
 }

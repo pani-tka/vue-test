@@ -1,7 +1,6 @@
 <template>
   <li>
-    <input type="checkbox" v-model="todo.completed">
-    <div v-if="!todo.editing" @click="editMode(todo)" :class="{completed: todo.completed}">
+    <div v-if="!todo.editing" @click="editMode(todo)">
       {{todo.title}} 
       <button @click="$emit('editTodo',editTodoCache)">Edit</button>
       <button @click="$emit('removeTodoItem')">Remove</button>
@@ -12,9 +11,9 @@
         v-focus 
         v-model="todo.title" 
         @keyup.enter="$emit('editTodo', editTodoCache)"
-        @keyup.esc="$emit('cancelEdit', editTodoCache)"
+        @keyup.esc="cancelEdit"
       />
-      <button @click="$emit('cancelEdit', editTodoCache)">Cancel</button>
+      <button @click="cancelEdit">Cancel</button>
     </div>
   </li>
 </template>
@@ -37,6 +36,10 @@ export default Vue.component('TodoItem', {
     editMode (todo) {
       todo.editing = true; 
       this.editTodoCache = todo.title;
+    },
+    cancelEdit () {
+      this.todo.title = this.editTodoCache;
+      this.todo.editing = false;
     }
   },
   

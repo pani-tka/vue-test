@@ -1,13 +1,11 @@
 <template>
   <ul>
-    <p>Total: {{todos.length}}</p>
     <TodoItem 
       v-for="(todo, index) in todos"
       :key="index"
       :todo="todo"
       @removeTodoItem="$emit('removeTodoById', index)"
       @editTodo="$emit('editTodo', index, todo)"
-      @cancelEdit="$emit('cancelEdit', index, todo)"
     />
   </ul>
 </template>
