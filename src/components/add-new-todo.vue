@@ -1,7 +1,7 @@
 <template>
   <div>
-    <input v-model="newTodo" placeholder="Please, add what you need to do..." @keyup.enter='clearTodoInput'/>
-    <button @click='clearTodoInput'>Add</button>
+    <input v-model="newTodo" placeholder="Please, add what you need to do..." @keyup.enter='createNewTodo'/>
+    <button @click='createNewTodo'>Add</button>
   </div>
 </template>
 
@@ -9,15 +9,18 @@
 import Vue from 'vue'
 
 export default Vue.component('AddNewTodo', {
-  data() {
+  data () {
     return {
       newTodo: ''
     }
   },
+
   methods: {
-    clearTodoInput () {
-      this.$emit('addTodo', this.newTodo);
-      this.newTodo = '';
+    createNewTodo () {
+      if (this.newTodo != '') {
+        this.$emit('addTodo', this.newTodo);
+        this.newTodo = '';
+      }
     }
   }
 })

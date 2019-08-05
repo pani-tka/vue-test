@@ -31,24 +31,15 @@ export default {
 
   methods: {
     addTodo (newTodo) {
-      let todo = {
-        title: newTodo,
-        completed: false,
-        editing: false
-      };
-      if (newTodo != '') {
-        this.todos.push(todo)
-      } 
+      let todo = {title: newTodo};
+      this.todos.push(todo)
     },
-
     removeTodoById (id) {
       this.todos.splice(id, 1);
     },
-
     editTodo (index, todo) {
-      if(todo.title != '') {
-        if (todo.title.trim() == "") todo.title = this.editTodoCache;
-        todo.editing = false;
+      if (todo.title.trim() == "") {
+        todo.title = this.beforeEditingValue;
       }
     }
   }

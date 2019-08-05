@@ -1,8 +1,8 @@
 <template>
   <li>
-    <div v-if="!todo.editing" @click="editMode(todo)">
+    <div v-if="!isEditing">
       {{todo.title}} 
-      <button @click="$emit('editTodo',editTodoCache)">Edit</button>
+      <button @click="editMode">Edit</button>
       <button @click="$emit('removeTodoItem')">Remove</button>
     </div>
     <div v-else>
@@ -10,7 +10,7 @@
         type="text" 
         v-focus 
         v-model="todo.title" 
-        @keyup.enter="$emit('editTodo', editTodoCache)"
+        @keyup.enter="saveEdit"
         @keyup.esc="cancelEdit"
       />
       <button @click="cancelEdit">Cancel</button>
@@ -28,21 +28,28 @@ export default Vue.component('TodoItem', {
 
   data() {
     return {
-      editTodoCache: ""
+      isEditing: false,
+      beforeEditingValue: ""
     }
   },
 
   methods:{
-    editMode (todo) {
-      todo.editing = true; 
-      this.editTodoCache = todo.title;
+    editMode () {
+      this.isEditing = true;
+      this.beforeEditingValue = this.todo.title;
+    },
+    saveEdit () {
+      if (this.todo.title != '') {
+        this.$emit('editTodo', this.beforeEditingValue);
+        this.isEditing = false;
+      }
     },
     cancelEdit () {
-      this.todo.title = this.editTodoCache;
-      this.todo.editing = false;
+      this.todo.title = this.beforeEditingValue;
+      this.isEditing = false;
     }
   },
-  
+
   directives: {
     focus: {
       inserted(el) {

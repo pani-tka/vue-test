@@ -18,6 +18,7 @@ export default Vue.component('TodoList', {
   props: {
     todos: Array
   },
+  
   components: {
     TodoItem
   }
