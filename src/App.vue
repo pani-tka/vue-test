@@ -18,6 +18,16 @@
 import AddNewTodo from './components/add-new-todo'
 import TodoList from './components/todo-list'
 
+const storageKey = 'vue-test-todo';
+const todoStorage = {
+  fetch: function () {
+    return JSON.parse(localStorage.getItem(storageKey)) || [];
+  },
+  save: function (todos) {
+    localStorage.setItem(storageKey, JSON.stringify(todos));
+  }
+};
+
 export default {
   name: "App",
 
@@ -28,10 +38,14 @@ export default {
 
   data() {
     return {
-      todos: [],
+      todos: todoStorage.fetch(),
     }
   },
-
+  watch: {
+    todos: {
+      handler: todos => todoStorage.save(todos)
+    }
+  },
   methods: {
     addTodo(newTodo) {
       const todoItem = {
@@ -58,7 +72,7 @@ export default {
   margin: 50px auto 30px;
   border: 2px solid #2d0c03;
   border-radius: 15px;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.5)
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
 }
 
 .container p {

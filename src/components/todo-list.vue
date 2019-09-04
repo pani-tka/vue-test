@@ -4,19 +4,19 @@
       <div class="filters">
         <button
           :class="{ selected: visibility === 'inProgress' }"
-          v-on:click="filterTodos('inProgress')"
+          @click="filterTodos('inProgress')"
         >
           InProgress
         </button>
         <button
           :class="{ selected: visibility === 'completed' }"
-          v-on:click="filterTodos('completed')"
+          @click="filterTodos('completed')"
         >
           Complete
         </button>
         <button
           :class="{ selected: visibility === 'all' }"
-          v-on:click="filterTodos('all')"
+          @click="filterTodos('all')"
         >
           All
         </button>
@@ -49,30 +49,24 @@ const filters = {
     return todos.filter(todo => todo.completed);
   }
 };
-
 export default {
   name: "TodoList",
-
   props: {
     todos: Array
   },
-
   data() {
     return {
       visibility: "inProgress"
     };
   },
-
   components: {
     TodoItem
   },
-
   computed: {
     filteredTodos() {
       return filters[this.visibility](this.todos);
     }
   },
-
   methods: {
     editTodoById(editingValue, index) {
       this.$emit("editTodoById", index, editingValue);
