@@ -1,13 +1,29 @@
 <template>
+  <div>
+    <div class="tabs">
+      <div class="filters">
+        <button
+          v-for="filter in filters"
+          :key="filter"
+          :filter="filter"
+          :class ="{active: stateFilter === filter}"
+          @click="changeFilter(filter)"
+        >
+          {{filter}}
+        </button>
+      </div>
+    </div>
     <ul class="todo-list">
       <TodoItem
         :class="{ completed: todo.completed }"
-        v-for="(todo, index) in todos"
-        :key="index"
-        :index="index"
+        v-for="todo in filteredTodos"
+        :key="todo.uuid"
+        :id="todo.uuid"
         :todo="todo"
+
       ></TodoItem>
     </ul>
+  </div>
 </template>
 
 <script>
@@ -17,8 +33,21 @@ export default {
   name: "TodoList",
   components: {TodoItem},
   computed: {
-    todos() {
-      return this.$store.state.todos;
+    stateFilter () {
+      return this.$store.state.filter;
+    },
+    filteredTodos () {
+      return this.$store.getters.filteredTodos;
+    },
+  },
+  data () {
+    return {
+      filters: ['In Progress', 'Completed', 'All']
+    }
+  },
+  methods: {
+    changeFilter (filter) {
+      this.$store.dispatch('changeFilter', filter);
     }
   }
 };
@@ -52,7 +81,7 @@ export default {
   outline: 0;
 }
 
-button.selected {
+button.active {
   background-color: #5c8a03;
   color: #fff;
 }

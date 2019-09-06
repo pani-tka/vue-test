@@ -24,10 +24,9 @@
 
 export default {
   name: 'TodoItem',
-
   props: {
     todo: Object,
-    index: Number
+    id: String
   },
   data() {
     return {
@@ -35,14 +34,18 @@ export default {
       editingValue: ''
     }
   },
-
+  computed : {
+    index () {
+      return this.$store.state.todos.findIndex(item => item.uuid === this.id);
+    }
+  },
   methods: {
     editMode() {
       this.editingValue = this.todo.title;
       this.isEditing = true;
     },
     saveEdit() {
-      this.$store.dispatch("editTodoById", {title: this.editingValue, id: this.index});
+      this.$store.dispatch("editTodoById", {title: this.editingValue, id: this.id, index: this.index});
       this.isEditing = false;
     },
     cancelEdit() {
@@ -52,7 +55,7 @@ export default {
       this.$store.dispatch('removeTodoById', this.index);
     },
     toggleStatus() {
-      this.$store.dispatch('toggleStatus', this.todo);
+      this.$store.dispatch('toggleStatus', this.index);
     }
   }
 }
