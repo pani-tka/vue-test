@@ -2,13 +2,8 @@
   <div>
     <h1 class="app-title">YOUR TODO-APP</h1>
     <div class="container">
-      <AddNewTodo @addTodo="addTodo"></AddNewTodo>
-      <TodoList
-        v-if="todos.length"
-        :todos="todos"
-        @editTodoById='editTodoById'
-        @removeTodoById='removeTodoById'
-      />
+      <AddNewTodo></AddNewTodo>
+      <TodoList v-if="todosCounter"/>
       <p v-else>Nothing left in the list.</p>
     </div>
   </div>
@@ -18,48 +13,19 @@
 import AddNewTodo from './components/add-new-todo'
 import TodoList from './components/todo-list'
 
-const storageKey = 'vue-test-todo';
-const todoStorage = {
-  fetch: function () {
-    return JSON.parse(localStorage.getItem(storageKey)) || [];
-  },
-  save: function (todos) {
-    localStorage.setItem(storageKey, JSON.stringify(todos));
-  }
-};
-
 export default {
   name: "App",
-
+  created() {
+    this.$store.dispatch('initialiseStore')
+  },
   components: {
     AddNewTodo,
     TodoList
   },
-
-  data() {
-    return {
-      todos: todoStorage.fetch(),
+  computed: {
+    todosCounter() {
+      return this.$store.state.todos.length;
     }
-  },
-  watch: {
-    todos: {
-      handler: todos => todoStorage.save(todos)
-    }
-  },
-  methods: {
-    addTodo(newTodo) {
-      const todoItem = {
-        title: newTodo,
-        completed: false
-      };
-      this.todos.push(todoItem);
-    },
-    removeTodoById(id) {
-      this.todos.splice(id, 1);
-    },
-    editTodoById(id, todo) {
-      this.todos[id].title = todo;
-    },
   }
 }
 </script>
@@ -77,7 +43,7 @@ export default {
 
 .container p {
   font-size: 20px;
-  font-family: "Helvetica Neue",serif;
+  font-family: "Helvetica Neue", serif;
   color: #5c8a03;
   text-align: center;
 }
@@ -86,7 +52,7 @@ export default {
   text-align: center;
   font-size: 40px;
   font-weight: normal;
-  font-family: "Helvetica Neue",serif;
+  font-family: "Helvetica Neue", serif;
   letter-spacing: 1px;
   color: #2d0c03;
 }

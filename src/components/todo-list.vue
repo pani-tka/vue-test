@@ -1,78 +1,24 @@
 <template>
-  <div>
-    <div class="tabs">
-      <div class="filters">
-        <button
-          :class="{ selected: visibility === 'inProgress' }"
-          @click="filterTodos('inProgress')"
-        >
-          InProgress
-        </button>
-        <button
-          :class="{ selected: visibility === 'completed' }"
-          @click="filterTodos('completed')"
-        >
-          Complete
-        </button>
-        <button
-          :class="{ selected: visibility === 'all' }"
-          @click="filterTodos('all')"
-        >
-          All
-        </button>
-      </div>
-    </div>
     <ul class="todo-list">
       <TodoItem
         :class="{ completed: todo.completed }"
+        v-for="(todo, index) in todos"
         :key="index"
+        :index="index"
         :todo="todo"
-        @editTodo="editTodoById($event, index)"
-        @removeTodoItem="$emit('removeTodoById', index)"
-        v-for="(todo, index) in filteredTodos"
-      />
+      ></TodoItem>
     </ul>
-  </div>
 </template>
 
 <script>
 import TodoItem from "./todo-item";
 
-const filters = {
-  all(todos) {
-    return todos;
-  },
-  inProgress(todos) {
-    return todos.filter(todo => !todo.completed);
-  },
-  completed(todos) {
-    return todos.filter(todo => todo.completed);
-  }
-};
 export default {
   name: "TodoList",
-  props: {
-    todos: Array
-  },
-  data() {
-    return {
-      visibility: "inProgress"
-    };
-  },
-  components: {
-    TodoItem
-  },
+  components: {TodoItem},
   computed: {
-    filteredTodos() {
-      return filters[this.visibility](this.todos);
-    }
-  },
-  methods: {
-    editTodoById(editingValue, index) {
-      this.$emit("editTodoById", index, editingValue);
-    },
-    filterTodos: function (filter) {
-      this.visibility = filter;
+    todos() {
+      return this.$store.state.todos;
     }
   }
 };
@@ -93,13 +39,6 @@ export default {
   transition: background 0.3s ease;
 }
 
-.filters {
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  padding: 0 1rem 1.5rem 1rem;
-}
-
 .filters button {
   cursor: pointer;
   width: 85px;
@@ -118,3 +57,5 @@ button.selected {
   color: #fff;
 }
 </style>
+
+

@@ -23,13 +23,12 @@ export default {
       newTodo: ''
     }
   },
-
   methods: {
     createNewTodo() {
       if (this.newTodo === '') {
         return false;
       }
-      this.$emit('addTodo', this.newTodo);
+      this.$store.dispatch('addTodo', this.newTodo);
       this.newTodo = '';
     }
   }
@@ -70,7 +69,7 @@ export default {
   position: absolute;
   top: 0;
   z-index: 1;
-  font-family: "Helvetica Neue";
+  font-family: "Helvetica Neue", serif;
   font-size: 20px;
   color: #2d0c03;
   text-indent: 10px;
