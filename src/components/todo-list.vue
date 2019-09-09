@@ -3,34 +3,25 @@
     <div class="tabs">
       <div class="filters">
         <button
-          :class="{ selected: visibility === 'inProgress' }"
-          v-on:click="filterTodos('inProgress')"
+          v-for="filter in filters"
+          :key="filter"
+          :filter="filter"
+          :class ="{active: stateFilter === filter}"
+          @click="changeFilter(filter)"
         >
-          InProgress
-        </button>
-        <button
-          :class="{ selected: visibility === 'completed' }"
-          v-on:click="filterTodos('completed')"
-        >
-          Complete
-        </button>
-        <button
-          :class="{ selected: visibility === 'all' }"
-          v-on:click="filterTodos('all')"
-        >
-          All
+          {{filter}}
         </button>
       </div>
     </div>
     <ul class="todo-list">
       <TodoItem
         :class="{ completed: todo.completed }"
-        :key="index"
+        v-for="todo in filteredTodos"
+        :key="todo.uuid"
+        :id="todo.uuid"
         :todo="todo"
-        @editTodo="editTodoById($event, index)"
-        @removeTodoItem="$emit('removeTodoById', index)"
-        v-for="(todo, index) in filteredTodos"
-      />
+
+      ></TodoItem>
     </ul>
   </div>
 </template>
@@ -38,47 +29,25 @@
 <script>
 import TodoItem from "./todo-item";
 
-const filters = {
-  all(todos) {
-    return todos;
-  },
-  inProgress(todos) {
-    return todos.filter(todo => !todo.completed);
-  },
-  completed(todos) {
-    return todos.filter(todo => todo.completed);
-  }
-};
-
 export default {
   name: "TodoList",
-
-  props: {
-    todos: Array
-  },
-
-  data() {
-    return {
-      visibility: "inProgress"
-    };
-  },
-
-  components: {
-    TodoItem
-  },
-
+  components: {TodoItem},
   computed: {
-    filteredTodos() {
-      return filters[this.visibility](this.todos);
+    stateFilter () {
+      return this.$store.state.filter;
+    },
+    filteredTodos () {
+      return this.$store.getters.filteredTodos;
+    },
+  },
+  data () {
+    return {
+      filters: ['In Progress', 'Completed', 'All']
     }
   },
-
   methods: {
-    editTodoById(editingValue, index) {
-      this.$emit("editTodoById", index, editingValue);
-    },
-    filterTodos: function (filter) {
-      this.visibility = filter;
+    changeFilter (filter) {
+      this.$store.dispatch('changeFilter', filter);
     }
   }
 };
@@ -99,13 +68,6 @@ export default {
   transition: background 0.3s ease;
 }
 
-.filters {
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  padding: 0 1rem 1.5rem 1rem;
-}
-
 .filters button {
   cursor: pointer;
   width: 85px;
@@ -119,8 +81,10 @@ export default {
   outline: 0;
 }
 
-button.selected {
+button.active {
   background-color: #5c8a03;
   color: #fff;
 }
 </style>
+
+

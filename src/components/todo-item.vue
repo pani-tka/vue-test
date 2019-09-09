@@ -1,12 +1,12 @@
 <template>
   <li>
     <div class="item-container" v-if="!isEditing">
-      <input class="toggle" type="checkbox" v-model="todo.completed"/>
+      <input @click="toggleStatus" class="toggle" type="checkbox" v-model="todo.completed"/>
       <label>
         {{todo.title}}
       </label>
       <button @click="editMode" class="edit-item">Edit</button>
-      <button @click="$emit('removeTodoItem')" class="remove-item">Remove</button>
+      <button @click="removeTodo" class="remove-item">Remove</button>
     </div>
     <div class="edit-item-container" v-else>
       <input
@@ -17,7 +17,6 @@
       />
       <button @click="cancelEdit" class="cancel-edit">Cancel</button>
     </div>
-
   </li>
 </template>
 
@@ -25,15 +24,14 @@
 
 export default {
   name: 'TodoItem',
-
   props: {
-    todo: Object
+    todo: Object,
+    id: String
   },
-
   data() {
     return {
       isEditing: false,
-      editingValue: '',
+      editingValue: ''
     }
   },
 
@@ -43,11 +41,17 @@ export default {
       this.isEditing = true;
     },
     saveEdit() {
-      this.$emit('editTodo', this.editingValue);
+      this.$store.dispatch("editTodoById", {title: this.editingValue, id: this.id});
       this.isEditing = false;
     },
     cancelEdit() {
       this.isEditing = false;
+    },
+    removeTodo() {
+      this.$store.dispatch('removeTodoById', this.id);
+    },
+    toggleStatus() {
+      this.$store.dispatch('toggleStatus', this.id);
     }
   }
 }
