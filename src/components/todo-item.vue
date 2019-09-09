@@ -6,7 +6,7 @@
         {{todo.title}}
       </label>
       <button @click="editMode" class="edit-item">Edit</button>
-      <button @click="removeTodoById" class="remove-item">Remove</button>
+      <button @click="removeTodo" class="remove-item">Remove</button>
     </div>
     <div class="edit-item-container" v-else>
       <input
@@ -47,7 +47,7 @@ export default {
     cancelEdit() {
       this.isEditing = false;
     },
-    removeTodoById() {
+    removeTodo() {
       this.$store.dispatch('removeTodoById', this.id);
     },
     toggleStatus() {
