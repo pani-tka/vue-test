@@ -3,6 +3,15 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
+const getIndex = (state, id) => state.todos.findIndex(item => item.uuid === id);
+
+const uuidv4 = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+};
+
 export const store = new Vuex.Store({
   state: {
     todos: [],
@@ -20,25 +29,22 @@ export const store = new Vuex.Store({
       state.todos.push({
         title: title,
         completed: false,
-        uuid: (function uuidv4() {
-          return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-          });
-        })()
+        uuid: uuidv4(),
       });
       localStorage.setItem('store', JSON.stringify(state));
     },
-    EDIT_TODO_BY_ID(state, {title, index}) {
-      Vue.set(state.todos[index], 'title', title);
+    EDIT_TODO_BY_ID(state, {title, id}) {
+      state.todos[getIndex(state, id)].title = title;
       localStorage.setItem('store', JSON.stringify(state));
     },
-    REMOVE_TODO_BY_ID(state, index) {
-      state.todos.splice(index, 1);
+    REMOVE_TODO_BY_ID(state, id) {
+      state.todos.splice(getIndex(state, id), 1);
       localStorage.setItem('store', JSON.stringify(state));
     },
-    TOGGLE_STATUS(state, index) {
-      Vue.set(state.todos[index], 'completed', !state.todos[index].completed);
+    TOGGLE_STATUS(state, id) {
+      const index = getIndex(state, id);
+
+      state.todos[index].completed = !state.todos[index].completed;
       localStorage.setItem('store', JSON.stringify(state));
     },
     CHANGE_FILTER(state, filter) {

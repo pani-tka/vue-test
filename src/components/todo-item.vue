@@ -34,28 +34,24 @@ export default {
       editingValue: ''
     }
   },
-  computed : {
-    index () {
-      return this.$store.state.todos.findIndex(item => item.uuid === this.id);
-    }
-  },
+
   methods: {
     editMode() {
       this.editingValue = this.todo.title;
       this.isEditing = true;
     },
     saveEdit() {
-      this.$store.dispatch("editTodoById", {title: this.editingValue, id: this.id, index: this.index});
+      this.$store.dispatch("editTodoById", {title: this.editingValue, id: this.id});
       this.isEditing = false;
     },
     cancelEdit() {
       this.isEditing = false;
     },
     removeTodoById() {
-      this.$store.dispatch('removeTodoById', this.index);
+      this.$store.dispatch('removeTodoById', this.id);
     },
     toggleStatus() {
-      this.$store.dispatch('toggleStatus', this.index);
+      this.$store.dispatch('toggleStatus', this.id);
     }
   }
 }
