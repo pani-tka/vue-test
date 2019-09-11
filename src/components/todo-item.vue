@@ -40,7 +40,7 @@ export default {
       this.editingValue = this.todo.title;
       this.isEditing = true;
     },
-    saveEdit: function () {
+    saveEdit () {
       if (!this.editingValue) {
         return false;
       }
