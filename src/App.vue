@@ -1,10 +1,15 @@
 <template>
   <div>
-    <h1 class="app-title">YOUR TODO-APP</h1>
-    <div class="container">
-      <AddNewTodo></AddNewTodo>
-      <TodoList v-if="todosCounter"/>
-      <p v-else>Nothing left in the list.</p>
+    <div v-if="isLoading" class="loader-container">
+      <img class="loader-img" src="./source/spinner.png" alt=""/>
+    </div>
+    <div v-else class="app-container">
+      <h1 class="app-title">YOUR TODO-APP</h1>
+      <div class="container">
+        <AddNewTodo></AddNewTodo>
+        <TodoList v-if="todosCounter"/>
+        <p v-else>Nothing left in the list.</p>
+      </div>
     </div>
   </div>
 </template>
@@ -15,8 +20,10 @@ import TodoList from './components/todo-list'
 
 export default {
   name: "App",
-  created() {
-    this.$store.dispatch('initialiseStore')
+  data () {
+    return {
+      isLoading: true
+    }
   },
   components: {
     AddNewTodo,
@@ -26,11 +33,38 @@ export default {
     todosCounter() {
       return this.$store.state.todos.length;
     }
+  },
+  created() {
+    this.$store.dispatch('initialiseStore')
+  },
+  mounted() {
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 1000)
   }
 }
 </script>
 
 <style scoped>
+
+.loader-container {
+  height: 100%;
+}
+
+@keyframes spin {
+  from {transform:rotate(0deg);}
+  to {transform:rotate(360deg);}
+}
+
+.loader-img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  animation: spin 0.2s linear 0s infinite;
+}
 
 .container {
   width: 80%;
