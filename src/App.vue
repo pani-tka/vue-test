@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!isLoading" class="loader-container">
+    <div v-if="isLoading" class="loader-container">
       <img class="loader-img" src="./source/spinner.png" alt=""/>
     </div>
     <div v-else class="app-container">
@@ -22,7 +22,7 @@ export default {
   name: "App",
   data () {
     return {
-      isLoading: false
+      isLoading: true
     }
   },
   components: {
@@ -39,7 +39,7 @@ export default {
   },
   mounted() {
     setTimeout(() => {
-      this.isLoading = true;
+      this.isLoading = false;
     }, 1000)
   }
 }
