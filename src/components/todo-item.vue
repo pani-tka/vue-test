@@ -41,7 +41,7 @@ export default {
       this.isEditing = true;
     },
     saveEdit: function () {
-      if (this.editingValue === '') {
+      if (!this.editingValue) {
         return false;
       }
       this.$store.dispatch("editTodoById", {title: this.editingValue, id: this.id});
