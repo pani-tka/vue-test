@@ -40,7 +40,10 @@ export default {
       this.editingValue = this.todo.title;
       this.isEditing = true;
     },
-    saveEdit() {
+    saveEdit () {
+      if (!this.editingValue) {
+        return false;
+      }
       this.$store.dispatch("editTodoById", {title: this.editingValue, id: this.id});
       this.isEditing = false;
     },
