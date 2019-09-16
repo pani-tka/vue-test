@@ -10,10 +10,10 @@
     </div>
     <div class="edit-item-container" v-else>
       <input
-        type="text"
-        v-model="editingValue"
         @keyup.enter="saveEdit"
         @keyup.esc="cancelEdit"
+        type="text"
+        v-model="editingValue"
       />
       <button @click="cancelEdit" class="cancel-edit">Cancel</button>
     </div>
@@ -40,7 +40,7 @@ export default {
       this.editingValue = this.todo.title;
       this.isEditing = true;
     },
-    saveEdit () {
+    saveEdit() {
       if (!this.editingValue) {
         return false;
       }

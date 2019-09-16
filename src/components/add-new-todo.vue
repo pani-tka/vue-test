@@ -1,26 +1,38 @@
 <template>
-  <div class="middle">
-    <div id="fancy-inputs">
-      <label class="input">
+  <form class="form-row">
+    <div class="col-md-6 mb-3">
+      <label for="input">Create your todo</label>
         <input
+          :class="status($v.newTodo)"
+          @blur="$v.newTodo.$touch()"
           @keyup.enter='createNewTodo'
+          id="input"
           type="text"
-          v-model="newTodo"
+          v-model.lazy="$v.newTodo.$model"
         />
-        <span><span>Create your todo</span></span>
-      </label>
-      <button @click='createNewTodo' class="add-todo">Add</button>
+      <button :disabled="$v.newTodo.$dirty && $v.$invalid" @click='createNewTodo' class="add-todo" type='button'>Add</button>
+      <div class="error" v-if="$v.newTodo.$dirty && !$v.newTodo.required">This field is required.</div>
+      <div class="error" v-if="$v.newTodo.$dirty && !$v.newTodo.maxLength">This field must have less than
+        {{$v.newTodo.$params.maxLength.max}} letters.
+      </div>
     </div>
-  </div>
+  </form>
 </template>
 
 <script>
+import {maxLength, required} from 'vuelidate/lib/validators'
 
 export default {
   name: 'AddNewTodo',
   data() {
     return {
       newTodo: ''
+    }
+  },
+  validations: {
+    newTodo: {
+      required,
+      maxLength: maxLength(4)
     }
   },
   methods: {
@@ -30,6 +42,13 @@ export default {
       }
       this.$store.dispatch('addTodo', this.newTodo);
       this.newTodo = '';
+      this.$v.$reset();
+    },
+    status(validation) {
+      return {
+        error: validation.$error,
+        dirty: validation.$dirty
+      }
     }
   }
 }
@@ -45,9 +64,7 @@ export default {
 #fancy-inputs {
   width: 70%;
   margin: 0 auto;
-
 }
-
 #fancy-inputs label.input {
   float: left;
   width: 370px;
@@ -156,4 +173,31 @@ export default {
   outline: 0;
 }
 
+input {
+  border: 1px solid silver;
+  border-radius: 4px;
+  background: white;
+  padding: 5px 10px;
+}
+
+.dirty {
+  border-color: #5A5;
+  background: #EFE;
+}
+
+.dirty:focus {
+  outline-color: #8E8;
+}
+
+.error {
+  border-color: red;
+  color: red;
+}
+
+.error:focus {
+  outline-color: #F99;
+}
+
+
 </style>
+
