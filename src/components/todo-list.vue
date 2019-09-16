@@ -68,6 +68,15 @@ export default {
   transition: background 0.3s ease;
 }
 
+.filters {
+  width: 65%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-around;
+}
+
 .filters button {
   cursor: pointer;
   width: 85px;
