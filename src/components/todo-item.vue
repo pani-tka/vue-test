@@ -10,17 +10,24 @@
     </div>
     <div class="edit-item-container" v-else>
       <input
+        :class="status($v.editingValue)"
+        @blur="$v.editingValue.$touch()"
         @keyup.enter="saveEdit"
         @keyup.esc="cancelEdit"
         type="text"
-        v-model="editingValue"
+        v-model.lazy="$v.editingValue.$model"
       />
       <button @click="cancelEdit" class="cancel-edit">Cancel</button>
+      <div class="error" v-if="$v.editingValue.$dirty && !$v.editingValue.required">This field is required.</div>
+      <div class="error" v-if="$v.editingValue.$dirty && !$v.editingValue.maxLength">This field must have less than
+        {{$v.editingValue.$params.maxLength.max}} letters.
+      </div>
     </div>
   </li>
 </template>
 
 <script>
+import {maxLength, required} from 'vuelidate/lib/validators'
 
 export default {
   name: 'TodoItem',
@@ -34,14 +41,19 @@ export default {
       editingValue: ''
     }
   },
-
+  validations: {
+    editingValue: {
+      required,
+      maxLength: maxLength(25)
+    }
+  },
   methods: {
     editMode() {
       this.editingValue = this.todo.title;
       this.isEditing = true;
     },
     saveEdit() {
-      if (!this.editingValue) {
+      if (this.$v.editingValue.$dirty && this.$v.$invalid) {
         return false;
       }
       this.$store.dispatch("editTodoById", {title: this.editingValue, id: this.id});
@@ -55,6 +67,12 @@ export default {
     },
     toggleStatus() {
       this.$store.dispatch('toggleStatus', this.id);
+    },
+    status(validation) {
+      return {
+        error: validation.$error,
+        dirty: validation.$dirty
+      }
     }
   }
 }
@@ -134,6 +152,31 @@ li.completed label {
   border-radius: 5px;
   margin: 0 5px 0 5px;
   outline: 0
+}
+
+/*input {
+  border: 1px solid silver;
+  border-radius: 4px;
+  background: white;
+  padding: 5px 10px;
+}*/
+
+.dirty {
+  border-color: #5A5;
+  background: #EFE;
+}
+
+.dirty:focus {
+  outline-color: #8E8;
+}
+
+.error {
+  border-color: red;
+  color: red;
+}
+
+.error:focus {
+  outline-color: #F99;
 }
 
 </style>

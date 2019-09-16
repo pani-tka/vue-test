@@ -32,7 +32,7 @@ export default {
   validations: {
     newTodo: {
       required,
-      maxLength: maxLength(4)
+      maxLength: maxLength(25)
     }
   },
   methods: {
