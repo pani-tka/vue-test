@@ -1,26 +1,36 @@
 <template>
-  <form>
-    <div>
-      <label for="input">Create your todo</label>
-        <input
-          :class="status($v.newTodo)"
+  <v-form @submit.self.prevent="createNewTodo" class="d-flex justify-center" ref="form">
+    <v-col cols="8">
+      <v-row class="justify-center">
+        <v-text-field
+          :counter="25"
+          :error-messages="validationError"
+          @input="$v.newTodo.$touch()"
           @blur="$v.newTodo.$touch()"
-          @keyup.enter='createNewTodo'
-          id="input"
+          color="light-green darken-3"
+          dense
+          label="Create your todo"
+          outlined
           type="text"
-          v-model.lazy="$v.newTodo.$model"
-        />
-      <button :disabled="$v.newTodo.$dirty && $v.$invalid" @click='createNewTodo' class="add-todo" type='button'>Add</button>
-      <div class="error" v-if="$v.newTodo.$dirty && !$v.newTodo.required">This field is required.</div>
-      <div class="error" v-if="$v.newTodo.$dirty && !$v.newTodo.maxLength">This field must have less than
-        {{$v.newTodo.$params.maxLength.max}} letters.
-      </div>
-    </div>
-  </form>
+          v-model.lazy="newTodo"
+        ></v-text-field>
+        <v-btn
+          :disabled="$v.newTodo.$dirty && $v.$invalid"
+          class="mx-2 white--text" color="light-green darken-3"
+          depressed
+          fab
+          small
+          type='submit'
+        >
+          <v-icon dark>add</v-icon>
+        </v-btn>
+      </v-row>
+    </v-col>
+  </v-form>
 </template>
 
 <script>
-import {maxLength, required} from 'vuelidate/lib/validators'
+import {maxLength} from 'vuelidate/lib/validators'
 
 export default {
   name: 'AddNewTodo',
@@ -31,8 +41,16 @@ export default {
   },
   validations: {
     newTodo: {
-      required,
       maxLength: maxLength(25)
+    }
+  },
+  computed: {
+    validationError() {
+      const errors = [];
+      if (!this.$v.newTodo.$dirty) return errors;
+      !this.$v.newTodo.maxLength && errors.push(`This field must have less than
+        ${this.$v.newTodo.$params.maxLength.max} letters`);
+      return errors
     }
   },
   methods: {
@@ -41,57 +59,10 @@ export default {
         return false;
       }
       this.$store.dispatch('addTodo', this.newTodo);
-      this.newTodo = '';
       this.$v.$reset();
-    },
-    status(validation) {
-      return {
-        error: validation.$error,
-        dirty: validation.$dirty
-      }
+      this.newTodo = '';
     }
   }
 }
 </script>
-
-<style scoped>
-.add-todo {
-  cursor: pointer;
-  width: 65px;
-  height: 30px;
-  background-color: #5c8a03;
-  font-family: "Helvetica Neue", serif;
-  color: white;
-  font-size: 10px;
-  border-radius: 5px;
-  margin: 0 5px 0 5px;
-  outline: 0;
-}
-
-input {
-  border: 1px solid silver;
-  border-radius: 4px;
-  background: white;
-  padding: 5px 10px;
-}
-
-.dirty {
-  border-color: #5A5;
-  background: #EFE;
-}
-
-.dirty:focus {
-  outline-color: #8E8;
-}
-
-.error {
-  border-color: red;
-  color: red;
-}
-
-.error:focus {
-  outline-color: #F99;
-}
-
-</style>
 

@@ -1,33 +1,62 @@
 <template>
-  <li>
-    <div class="item-container" v-if="!isEditing">
-      <input @click="toggleStatus" class="toggle" type="checkbox" v-model="todo.completed"/>
-      <label>
-        {{todo.title}}
-      </label>
-      <button @click="editMode" class="edit-item">Edit</button>
-      <button @click="removeTodo" class="remove-item">Remove</button>
-    </div>
-    <div class="edit-item-container" v-else>
-      <input
-        :class="status($v.editingValue)"
-        @blur="$v.editingValue.$touch()"
-        @keyup.enter="saveEdit"
-        @keyup.esc="cancelEdit"
-        type="text"
-        v-model.lazy="$v.editingValue.$model"
-      />
-      <button @click="cancelEdit" class="cancel-edit">Cancel</button>
-      <div class="error" v-if="$v.editingValue.$dirty && !$v.editingValue.required">This field is required.</div>
-      <div class="error" v-if="$v.editingValue.$dirty && !$v.editingValue.maxLength">This field must have less than
-        {{$v.editingValue.$params.maxLength.max}} letters.
-      </div>
-    </div>
-  </li>
+  <v-list-item class="d-flex flex-row flex-nowrap todo-item">
+    <v-row align="center" v-if="!isEditing">
+      <v-list-item-action>
+        <v-checkbox
+          :input-value="todo.completed"
+          @change="toggleStatus"
+          color="success"
+          hide-details
+        ></v-checkbox>
+      </v-list-item-action>
+      <v-list-item-content>
+        <v-list-item-title>
+          {{todo.title}}
+        </v-list-item-title>
+      </v-list-item-content>
+      <v-btn @click="editMode" class="mr-4" color="light-green darken-3" dark fab outlined x-small>
+        <v-icon>edit</v-icon>
+      </v-btn>
+      <v-dialog max-width="290" persistent v-model="dialog">
+        <template v-slot:activator="{ on }">
+          <v-btn color="light-green darken-3" dark fab outlined v-on="on" x-small>
+            <v-icon>delete</v-icon>
+          </v-btn>
+        </template>
+        <v-card>
+          <v-card-title class="text-md-left">Delete this todo?</v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn @click="dialog = false" color="green darken-1" text>NO</v-btn>
+            <v-btn @click="removeTodo" color="green darken-1" text>YES</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
+    <v-row class="d-flex justify-space-between align-center pa-0" v-else>
+      <v-col class="pa-0" sm="7">
+        <v-text-field
+          :counter="25"
+          :error-messages="validationError"
+          @blur="$v.editingValue.$touch()"
+          @input="$v.editingValue.$touch()"
+          @keyup.enter="saveEdit"
+          @keyup.esc="cancelEdit"
+          class="pa-0"
+          dense
+          type="text"
+          v-model.lazy="editingValue"
+        ></v-text-field>
+      </v-col>
+      <v-btn @click="cancelEdit" class="ml-4" color="light-green darken-3" dark fab outlined x-small>
+        <v-icon>close</v-icon>
+      </v-btn>
+    </v-row>
+  </v-list-item>
 </template>
 
 <script>
-import {maxLength, required} from 'vuelidate/lib/validators'
+import {maxLength} from 'vuelidate/lib/validators'
 
 export default {
   name: 'TodoItem',
@@ -38,13 +67,22 @@ export default {
   data() {
     return {
       isEditing: false,
-      editingValue: ''
+      editingValue: '',
+      dialog: false,
     }
   },
   validations: {
     editingValue: {
-      required,
       maxLength: maxLength(25)
+    }
+  },
+  computed: {
+    validationError() {
+      const errors = [];
+      if (!this.$v.editingValue.$dirty) return errors;
+      !this.$v.editingValue.maxLength && errors.push(`This field must have less than
+        ${this.$v.editingValue.$params.maxLength.max} letters`);
+      return errors;
     }
   },
   methods: {
@@ -64,119 +102,19 @@ export default {
     },
     removeTodo() {
       this.$store.dispatch('removeTodoById', this.id);
+      this.dialog = false;
     },
     toggleStatus() {
       this.$store.dispatch('toggleStatus', this.id);
     },
-    status(validation) {
-      return {
-        error: validation.$error,
-        dirty: validation.$dirty
-      }
-    }
   }
 }
 
 </script>
 
 <style scoped>
-.item-container {
-  width: 100%;
-  height: auto;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: center;
-  position: relative;
+.todo-item {
+  min-height: 54px;
 }
-
-.edit-item-container input {
-  width: 65%;
-  height: 40px;
-  font-family: "Helvetica Neue", serif;
-  font-size: 18px;
-  border: 0;
-  border-bottom: 1px solid #2d0c03;
-  outline: 0;
-  margin: 35px;
-}
-
-li .toggle {
-  text-align: center;
-  width: 35px;
-  height: 35px;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  border: none;
-  -webkit-appearance: none;
-  appearance: none;
-  outline: 0
-}
-
-li .toggle + label {
-  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMmM1LjUxNCAwIDEwIDQuNDg2IDEwIDEwcy00LjQ4NiAxMC0xMCAxMC0xMC00LjQ4Ni0xMC0xMCA0LjQ4Ni0xMCAxMC0xMHptMC0yYy02LjYyNyAwLTEyIDUuMzczLTEyIDEyczUuMzczIDEyIDEyIDEyIDEyLTUuMzczIDEyLTEyLTUuMzczLTEyLTEyLTEyeiIvPjwvc3ZnPg==");
-  background-repeat: no-repeat;
-  background-position: 15px center;
-}
-
-li .toggle:checked + label {
-  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMmM1LjUxNCAwIDEwIDQuNDg2IDEwIDEwcy00LjQ4NiAxMC0xMCAxMC0xMC00LjQ4Ni0xMC0xMCA0LjQ4Ni0xMCAxMC0xMHptMC0yYy02LjYyNyAwLTEyIDUuMzczLTEyIDEyczUuMzczIDEyIDEyIDEyIDEyLTUuMzczIDEyLTEyLTUuMzczLTEyLTEyLTEyem00LjM5MyA3LjVsLTUuNjQzIDUuNzg0LTIuNjQ0LTIuNTA2LTEuODU2IDEuODU4IDQuNSA0LjM2NCA3LjUtNy42NDMtMS44NTctMS44NTd6Ii8+PC9zdmc+");
-}
-
-li label {
-  width: 80%;
-  font-family: "Helvetica Neue", serif;
-  color: #2d0c03;
-  font-size: 25px;
-  word-break: break-all;
-  padding: 15px 15px 15px 60px;
-  display: block;
-  line-height: 1.2;
-  transition: color 0.4s;
-}
-
-li.completed label {
-  text-decoration: line-through;
-
-}
-
-.edit-item, .remove-item, .cancel-edit {
-  cursor: pointer;
-  width: 65px;
-  height: 30px;
-  background-color: #5c8a03;
-  font-family: "Helvetica Neue", serif;
-  color: white;
-  font-size: 10px;
-  border-radius: 5px;
-  margin: 0 5px 0 5px;
-  outline: 0
-}
-
-/*input {
-  border: 1px solid silver;
-  border-radius: 4px;
-  background: white;
-  padding: 5px 10px;
-}*/
-
-.dirty {
-  border-color: #5A5;
-  background: #EFE;
-}
-
-.dirty:focus {
-  outline-color: #8E8;
-}
-
-.error {
-  border-color: red;
-  color: red;
-}
-
-.error:focus {
-  outline-color: #F99;
-}
-
 </style>
+
