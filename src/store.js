@@ -15,7 +15,8 @@ const uuidv4 = () => {
 export const store = new Vuex.Store({
   state: {
     todos: [],
-    filter: 'inProgress'
+    filter: 'inProgress',
+    filters: ['inProgress', 'completed', 'all']
   },
 
   mutations: {

@@ -78,11 +78,10 @@ export default {
   },
   computed: {
     validationError() {
-      const errors = [];
-      if (!this.$v.editingValue.$dirty) return errors;
-      !this.$v.editingValue.maxLength && errors.push(`This field must have less than
-        ${this.$v.editingValue.$params.maxLength.max} letters`);
-      return errors;
+      let error = '';
+      if (!this.$v.editingValue.maxLength) {
+        return error = `This field must have less than ${this.$v.editingValue.$params.maxLength.max} letters`
+      }
     }
   },
   methods: {

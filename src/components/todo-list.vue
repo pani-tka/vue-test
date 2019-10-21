@@ -20,7 +20,7 @@
             {{filter}}
           </v-btn>
         </v-btn-toggle>
-        <v-list class="ma-8" v-if="filteredTodos">
+        <v-list class="ma-8" v-if="filteredTodos.length">
           <TodoItem
             :class="{ completed: todo.completed }"
             :id="todo.uuid"
@@ -44,7 +44,6 @@ export default {
   components: {TodoItem},
   data() {
     return {
-      filters: ['inProgress', 'completed', 'all'],
       currentFilter: "inProgress",
     }
   },
@@ -55,6 +54,9 @@ export default {
     filteredTodos () {
       return this.$store.getters.filteredTodos;
     },
+    filters() {
+      return this.$store.state.filters;
+    }
   },
   methods: {
     changeFilter (filter) {

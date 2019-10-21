@@ -18,12 +18,12 @@
             </v-dialog>
           </v-layout>
         </div>
-        <v-card min-height="300" rised v-else>
+        <div class="app-container" v-else>
           <v-toolbar-title class="text-center pa-12">YOUR TODO-APP</v-toolbar-title>
-          <AddNewTodo></AddNewTodo>
+          <AddNewTodo/>
           <TodoList v-if="todosCounter"/>
           <v-card-text class="text-center pa-12" v-else>Nothing left in the list.</v-card-text>
-        </v-card>
+        </div>
       </v-container>
     </v-content>
   </v-app>
@@ -59,4 +59,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.app-container {
+  min-height: 300px;
+  background-color: white;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+</style>
 
