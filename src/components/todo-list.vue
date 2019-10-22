@@ -1,29 +1,39 @@
 <template>
-  <div>
-    <div class="tabs">
-      <div class="filters">
-        <button
-          v-for="filter in filters"
-          :key="filter"
-          :filter="filter"
-          :class ="{active: stateFilter === filter}"
-          @click="changeFilter(filter)"
+  <v-row class="d-flex justify-center">
+    <v-col cols="9">
+      <v-container>
+        <v-btn-toggle
+          class="d-flex justify-center"
+          color="light-green darken-3"
+          group
+          tile
+          v-model="currentFilter"
         >
-          {{filter}}
-        </button>
-      </div>
-    </div>
-    <ul class="todo-list">
-      <TodoItem
-        :class="{ completed: todo.completed }"
-        v-for="todo in filteredTodos"
-        :key="todo.uuid"
-        :id="todo.uuid"
-        :todo="todo"
-
-      ></TodoItem>
-    </ul>
-  </div>
+          <v-btn
+            :class="{active: stateFilter === filter}"
+            :filter="filter"
+            :key="filter"
+            :value="filter"
+            @click="changeFilter(filter)"
+            v-for="filter in filters"
+          >
+            {{filter}}
+          </v-btn>
+        </v-btn-toggle>
+        <v-list class="ma-8" v-if="filteredTodos.length">
+          <TodoItem
+            :class="{ completed: todo.completed }"
+            :id="todo.uuid"
+            :key="todo.uuid"
+            :todo="todo"
+            v-for="todo in filteredTodos"
+          >
+          </TodoItem>
+        </v-list>
+        <div class="text-center pa-12" v-else>Nothing left in the list.</div>
+      </v-container>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -32,6 +42,11 @@ import TodoItem from "./todo-item";
 export default {
   name: "TodoList",
   components: {TodoItem},
+  data() {
+    return {
+      currentFilter: "inProgress",
+    }
+  },
   computed: {
     stateFilter () {
       return this.$store.state.filter;
@@ -39,10 +54,8 @@ export default {
     filteredTodos () {
       return this.$store.getters.filteredTodos;
     },
-  },
-  data () {
-    return {
-      filters: ['In Progress', 'Completed', 'All']
+    filters() {
+      return this.$store.state.filters;
     }
   },
   methods: {
@@ -51,40 +64,6 @@ export default {
     }
   }
 };
+
 </script>
-
-<style scoped>
-.todo-list {
-  width: 80%;
-  margin: 30px auto;
-  padding: 0;
-  list-style: none;
-}
-
-.todo-list li {
-  position: relative;
-  font-size: 24px;
-  border-radius: 10px;
-  transition: background 0.3s ease;
-}
-
-.filters button {
-  cursor: pointer;
-  width: 85px;
-  height: 40px;
-  font-family: "Helvetica Neue", serif;
-  color: #5c8a03;
-  font-size: 10px;
-  border: 2px solid #5c8a03;
-  border-radius: 15px;
-  margin: 0 5px 0 5px;
-  outline: 0;
-}
-
-button.active {
-  background-color: #5c8a03;
-  color: #fff;
-}
-</style>
-
 

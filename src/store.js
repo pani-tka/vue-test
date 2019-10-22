@@ -15,14 +15,14 @@ const uuidv4 = () => {
 export const store = new Vuex.Store({
   state: {
     todos: [],
-    filter: 'In Progress'
+    filter: 'inProgress',
+    filters: ['inProgress', 'completed', 'all']
   },
+
   mutations: {
     INITIALISE_STORE(state) {
-      if (localStorage.getItem('store')) {
-        this.replaceState(
-          Object.assign(state, JSON.parse(localStorage.getItem('store')))
-        );
+      if (localStorage.getItem('todos')) {
+        state.todos = Object.assign(state.todos, JSON.parse(localStorage.getItem('todos')));
       }
     },
     ADD_TODO (state, title) {
@@ -31,21 +31,22 @@ export const store = new Vuex.Store({
         completed: false,
         uuid: uuidv4(),
       });
-      localStorage.setItem('store', JSON.stringify(state));
+      localStorage.setItem('todos', JSON.stringify(state.todos));
     },
     EDIT_TODO_BY_ID(state, {title, id}) {
-      state.todos[getIndex(state, id)].title = title;
-      localStorage.setItem('store', JSON.stringify(state));
+      Vue.set(state.todos[getIndex(state, id)], 'title', title);
+      localStorage.setItem('todos', JSON.stringify(state.todos));
     },
     REMOVE_TODO_BY_ID(state, id) {
       state.todos.splice(getIndex(state, id), 1);
-      localStorage.setItem('store', JSON.stringify(state));
+      localStorage.setItem('todos', JSON.stringify(state.todos));
     },
     TOGGLE_STATUS(state, id) {
       const index = getIndex(state, id);
+      const currentStatus = state.todos[index].completed;
 
-      state.todos[index].completed = !state.todos[index].completed;
-      localStorage.setItem('store', JSON.stringify(state));
+      Vue.set(state.todos, index, Object.assign(state.todos[index], {completed: !currentStatus}));
+      localStorage.setItem('todos', JSON.stringify(state.todos));
     },
     CHANGE_FILTER(state, filter) {
       state.filter = filter;
@@ -76,15 +77,13 @@ export const store = new Vuex.Store({
   getters: {
     filteredTodos(state) {
       switch (state.filter) {
-        case 'In Progress':
+        case 'inProgress':
           return state.todos.filter(todo => !todo.completed);
-          break;
-        case 'Completed':
+        case 'completed':
           return state.todos.filter(todo => todo.completed);
-          break;
         default:
           return state.todos;
       }
     }
-  },
+  }
 });

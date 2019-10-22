@@ -1,17 +1,32 @@
 <template>
-  <div>
-    <div v-if="isLoading" class="loader-container">
-      <img class="loader-img" src="./source/spinner.png" alt=""/>
-    </div>
-    <div v-else class="app-container">
-      <h1 class="app-title">YOUR TODO-APP</h1>
-      <div class="container">
-        <AddNewTodo></AddNewTodo>
-        <TodoList v-if="todosCounter"/>
-        <p v-else>Nothing left in the list.</p>
-      </div>
-    </div>
-  </div>
+  <v-app>
+    <v-content>
+      <v-container fluid>
+        <div v-if="isLoading">
+          <v-layout justify-center row>
+            <v-dialog content-class="loading-dialog" fullscreen persistent v-model="isLoading">
+              <v-container fill-height>
+                <v-layout align-center justify-center row>
+                  <v-progress-circular
+                    :size="70"
+                    :width="7"
+                    color="light-green darken-3"
+                    indeterminate
+                  ></v-progress-circular>
+                </v-layout>
+              </v-container>
+            </v-dialog>
+          </v-layout>
+        </div>
+        <div class="app-container" v-else>
+          <v-toolbar-title class="text-center pa-12">YOUR TODO-APP</v-toolbar-title>
+          <AddNewTodo/>
+          <TodoList v-if="todosCounter"/>
+          <v-card-text class="text-center pa-12" v-else>Nothing left in the list.</v-card-text>
+        </div>
+      </v-container>
+    </v-content>
+  </v-app>
 </template>
 
 <script>
@@ -20,14 +35,14 @@ import TodoList from './components/todo-list'
 
 export default {
   name: "App",
+  components: {
+    AddNewTodo,
+    TodoList
+  },
   data () {
     return {
       isLoading: true
     }
-  },
-  components: {
-    AddNewTodo,
-    TodoList
   },
   computed: {
     todosCounter() {
@@ -46,49 +61,10 @@ export default {
 </script>
 
 <style scoped>
-
-.loader-container {
-  height: 100%;
-}
-
-@keyframes spin {
-  from {transform:rotate(0deg);}
-  to {transform:rotate(360deg);}
-}
-
-.loader-img {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  margin: auto;
-  animation: spin 0.2s linear 0s infinite;
-}
-
-.container {
-  width: 80%;
+.app-container {
   min-height: 300px;
-  margin: 50px auto 30px;
-  border: 2px solid #2d0c03;
-  border-radius: 15px;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+  background-color: white;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
-
-.container p {
-  font-size: 20px;
-  font-family: "Helvetica Neue", serif;
-  color: #5c8a03;
-  text-align: center;
-}
-
-.app-title {
-  text-align: center;
-  font-size: 40px;
-  font-weight: normal;
-  font-family: "Helvetica Neue", serif;
-  letter-spacing: 1px;
-  color: #2d0c03;
-}
-
 </style>
+
