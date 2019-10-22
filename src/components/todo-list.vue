@@ -29,32 +29,32 @@
   </v-row>
 </template>
 
-<script>
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator';
 import TodoItem from './todo-item.vue';
+import { ITodoItem } from 'types/todo';
 
-export default {
+@Component({
   name: 'TodoList',
   components: { TodoItem },
-  data() {
-    return {
-      currentFilter: 'inProgress',
-    };
-  },
-  computed: {
-    stateFilter() {
-      return this.$store.state.filter;
-    },
-    filteredTodos() {
-      return this.$store.getters.filteredTodos;
-    },
-    filters() {
-      return this.$store.state.filters;
-    },
-  },
-  methods: {
-    changeFilter(filter) {
-      this.$store.dispatch('changeFilter', filter);
-    },
-  },
-};
+})
+export default class TodoList extends Vue {
+  public currentFilter = 'inProgress';
+
+  get stateFilter(): string {
+    return this.$store.state.filter;
+  }
+
+  get filteredTodos(): ITodoItem[] {
+    return this.$store.getters.filteredTodos;
+  }
+
+  get filters(): string[] {
+    return this.$store.state.filters;
+  }
+
+  public changeFilter(filter: string): void {
+    this.$store.dispatch('changeFilter', filter);
+  }
+}
 </script>

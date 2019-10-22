@@ -9,7 +9,7 @@
           {{ todo.title }}
         </v-list-item-title>
       </v-list-item-content>
-      <v-btn @click="editMode" class="mr-4" color="light-green darken-3" dark fab outlined x-small>
+      <v-btn @click="enterEditingMode" class="mr-4" color="light-green darken-3" dark fab outlined x-small>
         <v-icon>edit</v-icon>
       </v-btn>
       <v-dialog max-width="290" persistent v-model="dialog">
@@ -51,61 +51,65 @@
 </template>
 
 <script lang="ts">
-import { maxLength } from 'vuelidate/lib/validators';
+import { Vue, Component, Prop } from 'vue-property-decorator';
+import { maxLength, required } from 'vuelidate/lib/validators';
+import { ITodoItem } from '../types/todo';
 
-export default {
+@Component({
   name: 'TodoItem',
-  props: {
-    todo: Object,
-    id: String,
-  },
-  data() {
-    return {
-      isEditing: false,
-      editingValue: '',
-      dialog: false,
-    };
-  },
   validations: {
     editingValue: {
+      required,
       maxLength: maxLength(25),
     },
   },
-  computed: {
-    validationError() {
-      let error = '';
-      if (!this.$v.editingValue.maxLength) {
-        return (error = `This field must have less than ${this.$v.editingValue.$params.maxLength.max} letters`);
-      }
-    },
-  },
-  methods: {
-    editMode() {
-      this.editingValue = this.todo.title;
-      this.isEditing = true;
-    },
-    saveEdit() {
-      if (this.$v.editingValue.$dirty && this.$v.$invalid) {
-        return false;
-      }
-      this.$store.dispatch('editTodoById', {
-        title: this.editingValue,
-        id: this.id,
-      });
-      this.isEditing = false;
-    },
-    cancelEdit() {
-      this.isEditing = false;
-    },
-    removeTodo() {
-      this.$store.dispatch('removeTodoById', this.id);
-      this.dialog = false;
-    },
-    toggleStatus() {
-      this.$store.dispatch('toggleStatus', this.id);
-    },
-  },
-};
+})
+export default class TodoItem extends Vue {
+  @Prop() public readonly todo: ITodoItem;
+  @Prop() public readonly id: string;
+
+  public dialog = false;
+  public isEditing = false;
+  public editingValue = '';
+
+  get validationError(): string {
+    if (!this.$v.editingValue.required) {
+      return 'This field is required';
+    }
+    if (!this.$v.editingValue.maxLength) {
+      return `This field must have less than ${this.$v.editingValue.$params.maxLength.max} letters`;
+    }
+    return '';
+  }
+
+  public enterEditingMode(): void {
+    this.editingValue = this.todo.title;
+    this.isEditing = true;
+  }
+  public saveEdit(): void {
+    if (this.$v.editingValue.$dirty && this.$v.$invalid) {
+      return;
+    }
+    this.$store.dispatch('editTodoById', {
+      title: this.editingValue,
+      id: this.id,
+    });
+    this.isEditing = false;
+  }
+
+  public cancelEdit(): void {
+    this.isEditing = false;
+  }
+
+  public removeTodo(): void {
+    this.$store.dispatch('removeTodoById', this.id);
+    this.dialog = false;
+  }
+
+  public toggleStatus(): void {
+    this.$store.dispatch('toggleStatus', this.id);
+  }
+}
 </script>
 
 <style scoped>

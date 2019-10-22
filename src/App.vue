@@ -24,35 +24,39 @@
   </v-app>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
+import Component from 'vue-class-component';
+
 import AddNewTodo from './components/add-new-todo.vue';
 import TodoList from './components/todo-list.vue';
 
-export default {
+@Component({
   name: 'App',
   components: {
     AddNewTodo,
     TodoList,
   },
-  data() {
-    return {
-      isLoading: true,
-    };
-  },
-  computed: {
-    todosCounter() {
-      return this.$store.state.todos.length;
-    },
-  },
-  created() {
-    this.$store.dispatch('initialiseStore');
-  },
-  mounted() {
+})
+export default class App extends Vue {
+  public isLoading = false;
+
+  get todosCounter(): number {
+    return this.$store.state.todos.length;
+  }
+
+  private created(): void {
+    this.load();
+  }
+
+  private load(): void {
+    this.isLoading = true;
     setTimeout(() => {
+      this.$store.dispatch('initialiseStore');
       this.isLoading = false;
     }, 1000);
-  },
-};
+  }
+}
 </script>
 
 <style scoped>

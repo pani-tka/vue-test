@@ -31,38 +31,34 @@
 </template>
 
 <script lang="ts">
+import { Vue, Component } from 'vue-property-decorator';
 import { maxLength } from 'vuelidate/lib/validators';
-// import Component from 'vue-class-component'
 
-export default {
+@Component({
   name: 'AddNewTodo',
-  data() {
-    return {
-      newTodo: '',
-    };
-  },
   validations: {
     newTodo: {
       maxLength: maxLength(25),
     },
   },
-  computed: {
-    validationError() {
-      let error = '';
-      if (!this.$v.newTodo.maxLength) {
-        return (error = `This field must have less than ${this.$v.newTodo.$params.maxLength.max} letters`);
-      }
-    },
-  },
-  methods: {
-    createNewTodo() {
-      if (this.newTodo === '') {
-        return false;
-      }
-      this.$store.dispatch('addTodo', this.newTodo);
-      this.$v.$reset();
-      this.newTodo = '';
-    },
-  },
-};
+})
+export default class AddNewTodo extends Vue {
+  public newTodo = '';
+
+  get validationError(): string {
+    if (!this.$v.newTodo.maxLength) {
+      return `This field must have less than ${this.$v.newTodo.$params.maxLength.max} letters`;
+    }
+    return;
+  }
+
+  public createNewTodo(): void {
+    if (!this.newTodo.length) {
+      return;
+    }
+    this.$store.dispatch('addTodo', this.newTodo);
+    this.$v.$reset();
+    this.newTodo = '';
+  }
+}
 </script>
