@@ -1,0 +1,32 @@
+{
+  "defaultSeverity": "warning",
+  "extends": [
+    "tslint:recommended"
+  ],
+  "linterOptions": {
+    "exclude": [
+      "node_modules/**"
+    ]
+  },
+  "rules": {
+    "indent": [true, "spaces", 2],
+    "interface-name": false,
+    "no-default-export": false,
+    "no-consecutive-blank-lines": false,
+    "object-literal-sort-keys": false,
+    "ordered-imports": false,
+    "arrow-parens": false,
+    "max-line-length": [true, 140],
+    "no-shadowed-variable": true,
+    "quotemark": [
+      true,
+      "single"
+    ],
+    "Shema": {
+      "quotemark": [
+        true,
+        "single"
+      ]
+    }
+  }
+}
