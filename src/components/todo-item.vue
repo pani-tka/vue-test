@@ -2,16 +2,11 @@
   <v-list-item class="d-flex flex-row flex-nowrap todo-item">
     <v-row align="center" v-if="!isEditing">
       <v-list-item-action>
-        <v-checkbox
-          :input-value="todo.completed"
-          @change="toggleStatus"
-          color="success"
-          hide-details
-        ></v-checkbox>
+        <v-checkbox :input-value="todo.completed" @change="toggleStatus" color="success" hide-details></v-checkbox>
       </v-list-item-action>
       <v-list-item-content>
         <v-list-item-title>
-          {{todo.title}}
+          {{ todo.title }}
         </v-list-item-title>
       </v-list-item-content>
       <v-btn @click="editMode" class="mr-4" color="light-green darken-3" dark fab outlined x-small>
@@ -55,34 +50,34 @@
   </v-list-item>
 </template>
 
-<script>
-import {maxLength} from 'vuelidate/lib/validators'
+<script lang="ts">
+import { maxLength } from 'vuelidate/lib/validators';
 
 export default {
   name: 'TodoItem',
   props: {
     todo: Object,
-    id: String
+    id: String,
   },
   data() {
     return {
       isEditing: false,
       editingValue: '',
       dialog: false,
-    }
+    };
   },
   validations: {
     editingValue: {
-      maxLength: maxLength(25)
-    }
+      maxLength: maxLength(25),
+    },
   },
   computed: {
     validationError() {
       let error = '';
       if (!this.$v.editingValue.maxLength) {
-        return error = `This field must have less than ${this.$v.editingValue.$params.maxLength.max} letters`
+        return (error = `This field must have less than ${this.$v.editingValue.$params.maxLength.max} letters`);
       }
-    }
+    },
   },
   methods: {
     editMode() {
@@ -93,7 +88,10 @@ export default {
       if (this.$v.editingValue.$dirty && this.$v.$invalid) {
         return false;
       }
-      this.$store.dispatch("editTodoById", {title: this.editingValue, id: this.id});
+      this.$store.dispatch('editTodoById', {
+        title: this.editingValue,
+        id: this.id,
+      });
       this.isEditing = false;
     },
     cancelEdit() {
@@ -106,9 +104,8 @@ export default {
     toggleStatus() {
       this.$store.dispatch('toggleStatus', this.id);
     },
-  }
-}
-
+  },
+};
 </script>
 
 <style scoped>
@@ -116,4 +113,3 @@ export default {
   min-height: 54px;
 }
 </style>
-

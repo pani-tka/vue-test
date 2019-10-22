@@ -1,13 +1,24 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+import { ITodoItem } from './types/todo';
+
 Vue.use(Vuex);
 
-const getIndex = (state, id) => state.todos.findIndex(item => item.uuid === id);
+export interface ITodoState {
+  todos: ITodoItem[];
+  filter: string;
+  filters: string[];
+}
+
+const getIndex = (state: ITodoState, id: string) => state.todos.findIndex((item: ITodoItem) => item.uuid === id);
 
 const uuidv4 = () => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    // tslint:disable-next-line:no-bitwise
+    const r = (Math.random() * 16) | 0;
+    // tslint:disable-next-line:no-bitwise
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 };
@@ -16,7 +27,7 @@ export const store = new Vuex.Store({
   state: {
     todos: [],
     filter: 'inProgress',
-    filters: ['inProgress', 'completed', 'all']
+    filters: ['inProgress', 'completed', 'all'],
   },
 
   mutations: {
@@ -25,15 +36,15 @@ export const store = new Vuex.Store({
         state.todos = Object.assign(state.todos, JSON.parse(localStorage.getItem('todos')));
       }
     },
-    ADD_TODO (state, title) {
+    ADD_TODO(state, title) {
       state.todos.push({
-        title: title,
+        title,
         completed: false,
         uuid: uuidv4(),
       });
       localStorage.setItem('todos', JSON.stringify(state.todos));
     },
-    EDIT_TODO_BY_ID(state, {title, id}) {
+    EDIT_TODO_BY_ID(state, { title, id }) {
       Vue.set(state.todos[getIndex(state, id)], 'title', title);
       localStorage.setItem('todos', JSON.stringify(state.todos));
     },
@@ -45,33 +56,33 @@ export const store = new Vuex.Store({
       const index = getIndex(state, id);
       const currentStatus = state.todos[index].completed;
 
-      Vue.set(state.todos, index, Object.assign(state.todos[index], {completed: !currentStatus}));
+      Vue.set(state.todos, index, Object.assign(state.todos[index], { completed: !currentStatus }));
       localStorage.setItem('todos', JSON.stringify(state.todos));
     },
     CHANGE_FILTER(state, filter) {
       state.filter = filter;
-    }
+    },
   },
 
   actions: {
-    initialiseStore({commit}) {
+    initialiseStore({ commit }) {
       commit('INITIALISE_STORE');
     },
-    addTodo({commit}, payload) {
+    addTodo({ commit }, payload) {
       commit('ADD_TODO', payload);
     },
-    editTodoById({commit}, payload) {
+    editTodoById({ commit }, payload) {
       commit('EDIT_TODO_BY_ID', payload);
     },
-    removeTodoById({commit}, payload) {
+    removeTodoById({ commit }, payload) {
       commit('REMOVE_TODO_BY_ID', payload);
     },
-    toggleStatus({commit}, payload) {
+    toggleStatus({ commit }, payload) {
       commit('TOGGLE_STATUS', payload);
     },
-    changeFilter({commit}, payload) {
+    changeFilter({ commit }, payload) {
       commit('CHANGE_FILTER', payload);
-    }
+    },
   },
 
   getters: {
@@ -84,6 +95,6 @@ export const store = new Vuex.Store({
         default:
           return state.todos;
       }
-    }
-  }
+    },
+  },
 });
